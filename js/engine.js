@@ -25,7 +25,10 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
-    canvas.width = 505;
+    // Defining the width and height here determines the size of the board and is used for calculating the
+    // number of rows / columns the board will have
+    // Values should be multiples of 101
+    canvas.width = 707;
     canvas.height = 606;
     doc.body.appendChild(canvas);
 
@@ -66,6 +69,8 @@ var Engine = (function(global) {
     function init() {
         reset();
         lastTime = Date.now();
+        // Moved this assignment here, so that it will actually be available in the global context
+        global.ctx = ctx;
         main();
     }
 
@@ -115,8 +120,8 @@ var Engine = (function(global) {
                 'images/grass-block.png',   // Row 1 of 2 of grass
                 'images/grass-block.png'    // Row 2 of 2 of grass
             ],
-            numRows = 6,
-            numCols = 5,
+            numRows = canvas.height / 101,
+            numCols = canvas.width / 101,
             row, col;
 
         /* Loop through the number of rows and columns we've defined above
@@ -179,5 +184,5 @@ var Engine = (function(global) {
      * object when run in a browser) so that developers can use it more easily
      * from within their app.js files.
      */
-    global.ctx = ctx;
+    //global.ctx = ctx;
 })(this);
