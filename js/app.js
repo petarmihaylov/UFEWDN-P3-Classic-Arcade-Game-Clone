@@ -1,4 +1,7 @@
-// Enemies our player must avoid
+/**
+ * ENEMY CLASS
+ *
+ */
 var Enemy = function() {
     // The enemy is initially not on the board
     this.isOnTheBoard = false;
@@ -17,7 +20,7 @@ Enemy.prototype.update = function(dt) {
     if (!this.isOnTheBoard) {
         this.putOnTheBoard();
         this.isOnTheBoard = true;
-    } else if (this.x > getCanvasSize().width) {
+    } else if (this.x > settings.boardSize.width) {
         this.reset();
     } else {
         this.move(dt);
@@ -45,9 +48,10 @@ Enemy.prototype.reset = function() {
     this.speed = getRandomNumber(1, 3);
 };
 
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
+/**
+ * PLAYER CLASS
+ *
+ */
 var Player = function() {
     this.x = null;
     this.y = null;
@@ -59,7 +63,7 @@ Player.prototype.update = function(dt) {
     if (!this.isOnTheBoard) {
         this.putOnTheBoard();
         this.isOnTheBoard = true;
-    } else if (this.x > getCanvasSize().width) {
+    } else if (this.x > settings.boardSize.width) {
         this.reset();
     } else {
         this.move(dt);
@@ -79,15 +83,36 @@ Player.prototype.move = function() {
 };
 
 Player.prototype.reset = function() {
-    this.x = (getCanvasSize().width - 101)/ 2;
-    this.y = getCanvasSize().height - 200;
+    this.x = (settings.boardSize.width - 101) / 2;
+    this.y = settings.boardSize.height - 200;
 };
 
 Player.prototype.handleInput = function() {
 
 };
 
-// Helper Functions
+// Define the settings for the game based on the board size
+var Settings = function() {
+    this.boardSize = this.getBoardSize();
+    // Limit the number of enemies so that there are at a minimum 3 rows with only 1 enemy
+    this.numEnemies = (this.boardSize.rows - 6) * 2 + 5;
+};
+// Determine the size of the board in terms of pixels and rows and columns
+Settings.prototype.getBoardSize = function() {
+    var width = ctx.canvas.width,
+        height = ctx.canvas.height;
+    return {
+        "width":    width,
+        "height":   height,
+        "columns":  width / 101,
+        "rows":     height / 101
+    }
+};
+
+/**
+ * HELPER FUNCTIONS
+ *
+ */
 function getRandomNumber(min, max) {
     return Math.random() * (max - min) + min;
 }
@@ -96,25 +121,10 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
-function getCanvasSize() {
-    var width = ctx.canvas.width,
-        height = ctx.canvas.height;
-    return {
-        "width": width,
-        "height":height
-    }
-}
 
-
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
-var allEnemies = [];
-var player;
-for (var enemies = 0; enemies < 5; enemies++) {
-    allEnemies.push(new Enemy);
-}
-player = new Player();
+// Creating container variables for the player and the enemies
+var allEnemies = [],
+    player;
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.

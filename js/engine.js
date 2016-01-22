@@ -69,9 +69,31 @@ var Engine = (function(global) {
     function init() {
         reset();
         lastTime = Date.now();
+
         // Moved this assignment here, so that it will actually be available in the global context
         global.ctx = ctx;
+
+        // Instantiating the game settings for use in app.js
+        global.settings = new Settings();
+        spawnEnemies();
+
+        // Instantiate the player
+        spawnPlayer();
+
+        // The game loop starts here
         main();
+    }
+
+    // Instantiate all the enemies
+    function spawnEnemies() {
+        for (var enemies = 1; enemies <= settings.numEnemies; enemies++) {
+            allEnemies.push(new Enemy);
+        }
+    }
+
+    // Instantiate the player
+    function spawnPlayer() {
+        player = new Player();
     }
 
     /* This function is called by main (our game loop) and itself calls all
