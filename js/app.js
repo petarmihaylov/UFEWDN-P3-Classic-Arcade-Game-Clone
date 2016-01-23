@@ -3,7 +3,16 @@
  *
  */
 var TILE_WIDTH = 101,
-    TILE_HEIGHT_OFFSET = 83;
+    TILE_HEIGHT_OFFSET = 83,
+    PLAYER_OFFSET_FROM_BOTTOM = 200;
+
+/**
+ * GAME STATES
+ *
+ */
+var gameIsPaused = false,
+    gameOver = false,
+    gameWon = false;
 
 /**
  * ENEMY CLASS
@@ -89,19 +98,64 @@ Player.prototype.putOnTheBoard = function() {
     this.reset();
 };
 
-// Moves the player across the screen based on key input
-Player.prototype.move = function() {
-
-};
-
 // Resets the player to their original position on the board
 Player.prototype.reset = function() {
     this.x = (settings.boardSize.width - TILE_WIDTH) / 2;
-    this.y = settings.boardSize.height - 200;
+    this.y = settings.boardSize.height - PLAYER_OFFSET_FROM_BOTTOM;
 };
 
-Player.prototype.handleInput = function() {
+Player.prototype.handleInput = function(key) {
+    var positionChange,
+        changeXBy = 0,
+        changeYBy = 0;
 
+    // Toggles paused/running states of the game
+    if (key === 'space') {
+        (gameIsPaused) ? gameIsPaused = false : gameIsPaused = true;
+    }
+
+    // Prevents the player from moving if the game is paused
+    if (gameIsPaused) return;
+    if (key === 'up')       changeYBy -= TILE_HEIGHT_OFFSET;
+    if (key === 'down')     changeYBy += TILE_HEIGHT_OFFSET;
+    if (key === 'left')     changeXBy -= TILE_WIDTH;
+    if (key === 'right')    changeXBy += TILE_WIDTH;
+
+    positionChange = {
+        'x': changeXBy,
+        'y': changeYBy
+    };
+
+    this.move(positionChange);
+};
+
+// Moves the player across the screen based on key input
+Player.prototype.move = function(positionChange) {
+    // Returns from this function if the player has not had a chance to enter any input yet
+    if (positionChange === undefined) return;
+
+    // Updates the player position
+    this.x += positionChange.x;
+    this.y += positionChange.y;
+
+    // Makes sure the player always stays on the board
+    if (this.x < 0)
+        this.x = 0;
+
+    if (this.x > settings.boardSize.width - TILE_WIDTH)
+        this.x = settings.boardSize.width - TILE_WIDTH;
+
+    if (this.y < -9)
+        this.y = -9;
+
+    if (this.y > settings.boardSize.height - PLAYER_OFFSET_FROM_BOTTOM) {
+        this.y = settings.boardSize.height - PLAYER_OFFSET_FROM_BOTTOM;
+    }
+
+    // Debug player position
+    console.log('Player Position:');
+    console.log('X ' + this.x);
+    console.log('Y ' + this.y);
 };
 
 /**
@@ -119,12 +173,20 @@ Settings.prototype.getBoardSize = function() {
     var width = ctx.canvas.width,
         height = ctx.canvas.height;
     return {
-        "width":    width,
-        "height":   height,
-        "columns":  width / TILE_WIDTH,
-        "rows":     height / TILE_WIDTH
+        'width':    width,
+        'height':   height,
+        'columns':  width / TILE_WIDTH,
+        'rows':     height / TILE_WIDTH
     }
 };
+
+/**
+ * Collision Detection
+ *
+ */
+function checkCollisions() {
+
+}
 
 /**
  * HELPER FUNCTIONS
@@ -147,6 +209,7 @@ var allEnemies = [],
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
+        32: 'space',
         37: 'left',
         38: 'up',
         39: 'right',
