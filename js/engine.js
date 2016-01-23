@@ -142,8 +142,8 @@ var Engine = (function(global) {
                 'images/grass-block.png',   // Row 1 of 2 of grass
                 'images/grass-block.png'    // Row 2 of 2 of grass
             ],
-            numRows = canvas.height / 101,
-            numCols = canvas.width / 101,
+            numRows = canvas.height / TILE_WIDTH,
+            numCols = canvas.width / TILE_WIDTH,
             row, col;
 
         /* Loop through the number of rows and columns we've defined above
@@ -159,7 +159,7 @@ var Engine = (function(global) {
                  * so that we get the benefits of caching these images, since
                  * we're using them over and over.
                  */
-                ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
+                ctx.drawImage(Resources.get(rowImages[row]), col * TILE_WIDTH, row * TILE_HEIGHT_OFFSET);
             }
         }
 

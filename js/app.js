@@ -1,4 +1,11 @@
 /**
+ * GLOBAL CONSTANTS
+ *
+ */
+var TILE_WIDTH = 101,
+    TILE_HEIGHT_OFFSET = 83;
+
+/**
  * ENEMY CLASS
  *
  */
@@ -38,13 +45,13 @@ Enemy.prototype.putOnTheBoard = function() {
 };
 
 Enemy.prototype.move = function(dt) {
-    this.x = this.x + 101 * dt * this.speed;
+    this.x = this.x + TILE_WIDTH * this.speed * dt;
 };
 
 Enemy.prototype.reset = function() {
     this.row = getRandomInt(0, 4);
-    this.x = -202; // Spawn a little further away from the page to give the player some breathing room
-    this.y = (this.row * 83) + 62;
+    this.x = TILE_WIDTH * -2; // Spawn a little further away from the page to give the player some breathing room
+    this.y = (this.row * TILE_HEIGHT_OFFSET) + 62;
     this.speed = getRandomNumber(1, 3);
 };
 
@@ -83,7 +90,7 @@ Player.prototype.move = function() {
 };
 
 Player.prototype.reset = function() {
-    this.x = (settings.boardSize.width - 101) / 2;
+    this.x = (settings.boardSize.width - TILE_WIDTH) / 2;
     this.y = settings.boardSize.height - 200;
 };
 
@@ -91,6 +98,10 @@ Player.prototype.handleInput = function() {
 
 };
 
+/**
+ * Settings CLASS
+ *
+ */
 // Define the settings for the game based on the board size
 var Settings = function() {
     this.boardSize = this.getBoardSize();
@@ -104,8 +115,8 @@ Settings.prototype.getBoardSize = function() {
     return {
         "width":    width,
         "height":   height,
-        "columns":  width / 101,
-        "rows":     height / 101
+        "columns":  width / TILE_WIDTH,
+        "rows":     height / TILE_WIDTH
     }
 };
 
