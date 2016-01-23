@@ -44,15 +44,17 @@ Enemy.prototype.putOnTheBoard = function() {
     this.reset();
 };
 
+// Moves the enemy across the screen as the game progresses
 Enemy.prototype.move = function(dt) {
     this.x = this.x + TILE_WIDTH * this.speed * dt;
 };
 
+// Resets the enemy back to a random position off of the screen on the left
 Enemy.prototype.reset = function() {
     this.row = getRandomInt(0, 4);
     this.x = TILE_WIDTH * -2; // Spawn a little further away from the page to give the player some breathing room
     this.y = (this.row * TILE_HEIGHT_OFFSET) + 62;
-    this.speed = getRandomNumber(1, 3);
+    this.speed = getRandomNumber(1, 3); // generates a random speed factor for the enemy
 };
 
 /**
@@ -66,6 +68,7 @@ var Player = function() {
     this.sprite = 'images/char-boy.png'
 };
 
+// Update the player's position on the board
 Player.prototype.update = function(dt) {
     if (!this.isOnTheBoard) {
         this.putOnTheBoard();
@@ -77,6 +80,7 @@ Player.prototype.update = function(dt) {
     }
 };
 
+// Renders the player on the screen
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
@@ -85,10 +89,12 @@ Player.prototype.putOnTheBoard = function() {
     this.reset();
 };
 
+// Moves the player across the screen based on key input
 Player.prototype.move = function() {
 
 };
 
+// Resets the player to their original position on the board
 Player.prototype.reset = function() {
     this.x = (settings.boardSize.width - TILE_WIDTH) / 2;
     this.y = settings.boardSize.height - 200;
@@ -99,7 +105,7 @@ Player.prototype.handleInput = function() {
 };
 
 /**
- * Settings CLASS
+ * SETTINGS CLASS
  *
  */
 // Define the settings for the game based on the board size
