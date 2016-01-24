@@ -7,12 +7,18 @@ var TILE_WIDTH = 101,
     PLAYER_OFFSET_FROM_BOTTOM = 200;
 
 /**
- * GAME STATES
+ * GAME CLASS
  *
  */
-var gameIsPaused = false,
-    gameOver = false,
-    gameWon = false;
+
+var Game = function () {
+    this.isPaused = true;
+    this.isWon = false;
+    this.isOver = false;
+};
+Game.prototype.toggleState =  function() {
+    (this.isPaused) ? this.isPaused = false : this.isPaused = true;
+};
 
 /**
  * ENEMY CLASS
@@ -21,8 +27,10 @@ var gameIsPaused = false,
 var Enemy = function() {
     // The enemy is initially not on the board
     this.isOnTheBoard = false;
-    this.x = null;
-    this.y = null;
+
+    // Default game state is paused, so instantiating the enemies off of the screen will make them "invisible"
+    this.x = -500;
+    this.y = -500;
     this.speed = null;
     this.sprite = 'images/enemy-bug.png';
 };
@@ -71,8 +79,9 @@ Enemy.prototype.reset = function() {
  *
  */
 var Player = function() {
-    this.x = null;
-    this.y = null;
+    // Default game state is paused, so instantiating the player off of the screen will make them "invisible"
+    this.x = -500;
+    this.y = -500;
     this.isOnTheBoard = false;
     this.sprite = 'images/char-boy.png'
 };
@@ -110,12 +119,10 @@ Player.prototype.handleInput = function(key) {
         changeYBy = 0;
 
     // Toggles paused/running states of the game
-    if (key === 'space') {
-        (gameIsPaused) ? gameIsPaused = false : gameIsPaused = true;
-    }
+    if (key === 'space') game.toggleState();
 
     // Prevents the player from moving if the game is paused
-    if (gameIsPaused) return;
+    if (game.isPaused) return;
     if (key === 'up')       changeYBy -= TILE_HEIGHT_OFFSET;
     if (key === 'down')     changeYBy += TILE_HEIGHT_OFFSET;
     if (key === 'left')     changeXBy -= TILE_WIDTH;
@@ -202,7 +209,8 @@ function getRandomInt(min, max) {
 
 
 // Creating container variables for the player and the enemies
-var allEnemies = [],
+var game,
+    allEnemies = [],
     player;
 
 // This listens for key presses and sends the keys to your
