@@ -16,7 +16,7 @@ var Game = function () {
     this.isWon = false;
     this.isOver = false;
 };
-Game.prototype.toggleState =  function() {
+Game.prototype.togglePauseResume =  function() {
     (this.isPaused) ? this.isPaused = false : this.isPaused = true;
 };
 
@@ -79,10 +79,14 @@ Enemy.prototype.reset = function() {
  *
  */
 var Player = function() {
+    // The player is initially not on the board
+    this.isOnTheBoard = false;
+
     // Default game state is paused, so instantiating the player off of the screen will make them "invisible"
     this.x = -500;
     this.y = -500;
-    this.isOnTheBoard = false;
+    this.row = settings.boardSize.rows;
+    this.column = Math.ceil((settings.boardSize.columns / 2) + 1);
     this.sprite = 'images/char-boy.png'
 };
 
@@ -111,26 +115,50 @@ Player.prototype.putOnTheBoard = function() {
 Player.prototype.reset = function() {
     this.x = (settings.boardSize.width - TILE_WIDTH) / 2;
     this.y = settings.boardSize.height - PLAYER_OFFSET_FROM_BOTTOM;
+
+    // Use rows for simpler collision detection
+    this.row = settings.boardSize.rows;
+    this.column = Math.ceil(settings.boardSize.columns / 2);
 };
 
 Player.prototype.handleInput = function(key) {
     var positionChange,
         changeXBy = 0,
-        changeYBy = 0;
+        changeYBy = 0,
+        newRow = 0,
+        newColumn = 0;
 
     // Toggles paused/running states of the game
-    if (key === 'space') game.toggleState();
+    if (key === 'space') game.togglePauseResume();
 
     // Prevents the player from moving if the game is paused
     if (game.isPaused) return;
-    if (key === 'up')       changeYBy -= TILE_HEIGHT_OFFSET;
-    if (key === 'down')     changeYBy += TILE_HEIGHT_OFFSET;
-    if (key === 'left')     changeXBy -= TILE_WIDTH;
-    if (key === 'right')    changeXBy += TILE_WIDTH;
+
+    if (key === 'up') {
+        changeYBy -= TILE_HEIGHT_OFFSET;
+        newRow -= 1
+    }
+
+    if (key === 'down') {
+        changeYBy += TILE_HEIGHT_OFFSET;
+        newRow += 1;
+    }
+
+    if (key === 'left') {
+        changeXBy -= TILE_WIDTH;
+        newColumn -= 1;
+    }
+
+    if (key === 'right') {
+        changeXBy += TILE_WIDTH;
+        newColumn += 1;
+    }
 
     positionChange = {
-        'x': changeXBy,
-        'y': changeYBy
+        'x':        changeXBy,
+        'y':        changeYBy,
+        'row':      newRow,
+        'column':   newColumn
     };
 
     this.move(positionChange);
@@ -144,27 +172,39 @@ Player.prototype.move = function(positionChange) {
     // Updates the player position
     this.x += positionChange.x;
     this.y += positionChange.y;
+    this.row += positionChange.row;
+    this.column += positionChange.column;
 
     // Makes sure the player always stays on the board
-    if (this.x < 0)
+    if (this.x < 0) {
         this.x = 0;
+        this.column = 1;
+    }
 
-    if (this.x > settings.boardSize.width - TILE_WIDTH)
+    if (this.x > settings.boardSize.width - TILE_WIDTH) {
         this.x = settings.boardSize.width - TILE_WIDTH;
+        this.column = settings.boardSize.columns;
+    }
 
-    if (this.y < -9)
+    if (this.y < -9) {
         this.y = -9;
+        this.row = 1;
+    }
 
     if (this.y > settings.boardSize.height - PLAYER_OFFSET_FROM_BOTTOM) {
         this.y = settings.boardSize.height - PLAYER_OFFSET_FROM_BOTTOM;
+        this.row = settings.boardSize.rows;
     }
 
     // Debug player position
     console.log('Player Position:');
     console.log('X ' + this.x);
     console.log('Y ' + this.y);
+    console.log('Row: ' + this.row);
+    console.log('Column: ' + this.column);
 };
 
+//TODO: Refactor the Settings to part of the Game class
 /**
  * SETTINGS CLASS
  *
