@@ -73,6 +73,9 @@ var Engine = (function(global) {
         // Moved this assignment here, so that it will actually be available in the global context
         global.ctx = ctx;
 
+        // Instantiating the game
+        startGame();
+
         // Instantiating the game settings for use in app.js
         global.settings = new Settings();
         spawnEnemies();
@@ -96,6 +99,11 @@ var Engine = (function(global) {
         player = new Player();
     }
 
+    // Instantiate the game
+    function startGame() {
+        game = new Game();
+    }
+
     /* This function is called by main (our game loop) and itself calls all
      * of the functions which may need to update entity's data. Based on how
      * you implement your collision detection (when two entities occupy the
@@ -106,7 +114,8 @@ var Engine = (function(global) {
      * on the entities themselves within your app.js file).
      */
     function update(dt) {
-        if (gameIsPaused) return;
+        console.log(game.isPaused);
+        if (game.isPaused) return;
         updateEntities(dt);
         checkCollisions();
     }
