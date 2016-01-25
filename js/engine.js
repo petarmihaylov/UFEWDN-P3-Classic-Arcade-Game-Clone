@@ -73,9 +73,6 @@
         // Moved this assignment here, so that it will actually be available in the global context
         global.ctx = ctx;
 
-        // Instantiating the game
-        startGame();
-
         // Instantiating the game settings for use in app.js
         global.settings = new Settings();
         spawnEnemies();
@@ -83,13 +80,16 @@
         // Instantiate the player
         spawnPlayer();
 
+        // Instantiating the game
+        startGame();
+
         // The game loop starts here
         main();
     }
 
     // Instantiate all the enemies
     function spawnEnemies() {
-        for (var enemies = 1; enemies <= settings.numEnemies; enemies++) {
+        for (var enemy = 1; enemy <= settings.numEnemies; enemy++) {
             allEnemies.push(new Enemy);
         }
     }
@@ -102,6 +102,7 @@
     // Instantiate the game
     function startGame() {
         game = new Game();
+        game.render();
     }
 
     /* This function is called by main (our game loop) and itself calls all
@@ -114,7 +115,8 @@
      * on the entities themselves within your app.js file).
      */
     function update(dt) {
-        console.log(game.isPaused);
+        //TODO: Remove this console.log line after implementing in indication when the game is paused
+        //console.log(game.isPaused);
         if (game.isPaused) return;
         updateEntities(dt);
         checkCollisions();
@@ -189,6 +191,8 @@
         });
 
         player.render();
+
+        game.render();
     }
 
     /* This function does nothing but it could have been a good place to
