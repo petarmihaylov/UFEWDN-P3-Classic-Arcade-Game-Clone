@@ -18,7 +18,25 @@ var Game = function () {
     this.isWon = false;
     this.isLost = false;
     // 1 - easy, 2 - normal, 3 - hard --- default is normal
-    this.difficulty = 3;
+    this.difficulty = 2;
+
+    // Define all the menu text
+    this.titleGame = new Text('40pt Impact', 'center', settings.boardSize.width / 2, 43, 'Classic Frogger Remake', 'Lime');
+    this.rules = new Text('36pt Impact', 'center', settings.boardSize.width / 2, 106, 'The Rules', 'DodgerBlue');
+    this.controlsRule = new Text('28pt Impact', 'center', settings.boardSize.width / 2, 179, 'Use the arrow keys to move', 'Lime');
+    this.enemiesRule = new Text('28pt Impact', 'center', settings.boardSize.width / 2, 228, 'Avoid the bugs', 'Lime');
+    this.winRule = new Text('28pt Impact', 'center', settings.boardSize.width / 2, 272, 'Get to the water to win!', 'Lime');
+    this.selectDifficulty = new Text('36pt Impact', 'center', settings.boardSize.width / 2, settings.boardSize.width / 2, 'Select Difficulty', 'DodgerBlue');
+
+    this.easy = new Text('28pt Impact', 'center', settings.boardSize.width / 5, (settings.boardSize.width / 2) + 83, 'Easy');
+    this.normal = new Text('28pt Impact', 'center', settings.boardSize.width / 2, (settings.boardSize.width / 2) + 83, 'Normal');
+    this.hard = new Text('28pt Impact', 'center', settings.boardSize.width * 4 / 5, (settings.boardSize.width / 2) + 83, 'Hard');
+
+    this.startGameRule = new Text('36pt Impact', 'center', settings.boardSize.width / 2, 530, 'Press Space to Play', 'DodgerBlue');
+
+    this.resumeRule = new Text('36pt Impact', 'center', settings.boardSize.width / 2, 272, 'Press Space to Resume');
+    this.lossRule = new Text('36pt Impact', 'center', settings.boardSize.width / 2, 272, 'Sorry! You lost.');
+    this.tryAgainRule = new Text('36pt Impact', 'center', settings.boardSize.width / 2, settings.boardSize.width / 2, 'Press Space to Play Again');
 };
 Game.prototype.togglePauseResume =  function() {
     (this.isPaused) ? this.isPaused = false : this.isPaused = true;
@@ -45,50 +63,56 @@ Game.prototype.togglePauseResume =  function() {
 
 Game.prototype.render = function() {
     if (!game.isStarted && game.isPaused && !game.isLost) {
-        // These are the only Text objects that will need to have their properties changed so all other text ca be a simple function call
-        var easy = new Text('28pt Impact', 'center', settings.boardSize.width / 5, (settings.boardSize.width / 2) + 83, 'Easy');
-        var normal = new Text('28pt Impact', 'center', settings.boardSize.width / 2, (settings.boardSize.width / 2) + 83, 'Normal');
-        var hard = new Text('28pt Impact', 'center', settings.boardSize.width * 4 / 5, (settings.boardSize.width / 2) + 83, 'Hard');
-
-        var titleGame = new Text('40pt Impact', 'center', settings.boardSize.width / 2, 43, 'Classic Frogger Remake');
-        var rules = new Text('36pt Impact', 'center', settings.boardSize.width / 2, 106, 'The Rules');
-        var controlsRule = new Text('28pt Impact', 'center', settings.boardSize.width / 2, 179, 'Use the arrow keys to move');
-        var enemiesRule = new Text('28pt Impact', 'center', settings.boardSize.width / 2, 228, 'Avoid the bugs');
-        var winRule = new Text('28pt Impact', 'center', settings.boardSize.width / 2, 272, 'Get to the water to win!');
-        var selectDifficulty = new Text('36pt Impact', 'center', settings.boardSize.width / 2, settings.boardSize.width / 2, 'Select Difficulty');
 
         // Highlight the text for the game difficulty chosen
         if (game.difficulty === 1) {
-            easy.changeFillStyle('yellow');
-            console.log('Easy fillStyle: ' + easy.fillStyle);
+            this.easy.changeFillStyle('lime');
+            this.normal.changeFillStyle('white');
+            this.hard.changeFillStyle('white');
         } else if (game.difficulty === 2) {
-            normal.changeFillStyle('yellow');
-            console.log('Normal fillStyle: ' + normal.fillStyle);
+            this.easy.changeFillStyle('white');
+            this.normal.changeFillStyle('lime');
+            this.hard.changeFillStyle('white');
         } else {
-            hard.changeFillStyle('yellow');
-            console.log('Hard fillStyle: ' + hard.fillStyle);
+            this.easy.changeFillStyle('white');
+            this.normal.changeFillStyle('white');
+            this.hard.changeFillStyle('lime');
         }
 
         // Render the objects
-        titleGame.render();
-        rules.render();
-        controlsRule.render();
-        enemiesRule.render();
-        winRule.render();
-        selectDifficulty.render();
+        this.titleGame.render();
+        this.rules.render();
+        this.controlsRule.render();
+        this.enemiesRule.render();
+        this.winRule.render();
+        this.selectDifficulty.render();
 
-        easy.render();
-        normal.render();
-        hard.render();
+        this.easy.render();
+        this.normal.render();
+        this.hard.render();
 
-        Text('36pt Impact', 'center', settings.boardSize.width / 2, 530, 'Press Space to Play');
+        if (this.startGameRule.fontSize <= 36 && this.startGameRule.fontSize > 30 && this.startGameRule.isGettingSmaller) {
+            this.startGameRule.changeSize(-0.2);
+        } else {
+            this.startGameRule.isGettingSmaller = false;
+        }
+
+        if (this.startGameRule.fontSize >= 29 && this.startGameRule.fontSize < 36 && !this.startGameRule.isGettingSmaller) {
+            this.startGameRule.changeSize(0.2);
+        } else {
+            this.startGameRule.isGettingSmaller = true;
+        }
+
+
+        this.startGameRule.render();
+
     } else if (game.isPaused && !game.isLost) {
-        Text('36pt Impact', 'center', settings.boardSize.width / 2, 272, 'Press Space to Resume');
+        this.resumeRule.render();
     } else if (game.isLost) {
-        Text('36pt Impact', 'center', settings.boardSize.width / 2, 272, 'Sorry! You lost.');
-        Text('36pt Impact', 'center', settings.boardSize.width / 2, settings.boardSize.width / 2, 'Press Space to Play Again');
+        this.lossRule.render();
+        this.tryAgainRule.render();
     } else if (game.isWon) {
-
+        // TODO: Define what happens when the game is won!
     } else {
         game.isStarted = true;
     }
@@ -328,17 +352,32 @@ Settings.prototype.getBoardSize = function() {
  */
 
 var Text = function (font, alignment, x, y, text, fillStyle) {
+    // TODO: Refactor this to use a separate value for the font size, unit of measurem, and font
     this.font = font;
+
+    // Returns whatever is in front of 'pt Impact' for easier font size manipulation
+    this.fontSize = font.slice(0,2);
     this.alignment = alignment;
     this.x = x;
     this.y = y;
     this.text = text;
     this.fillStyle = fillStyle;
+    this.isGettingSmaller = true;
 };
 
 Text.prototype.changeFillStyle = function(newColor) {
-    this.fillStyle = newColor
+    this.fillStyle = newColor;
     ctx.fillStyle = this.fillStyle;
+};
+
+Text.prototype.changeSize = function(changeSize) {
+    // Converts the new font size to a string and prepends it to a sliced 'pt Impact'
+    //console.log('Old Font Size: ' + this.fontSize)
+    this.fontSize = parseFloat(this.fontSize) + changeSize;
+    //console.log('New Font Size: ' + this.fontSize);
+    // TODO: Refactor this to use a variable as the units of measure and the font
+    this.font = this.fontSize.toString() + this.font.slice(-9);
+    //console.log('New Font (and size): ' + this.font);
 };
 
 Text.prototype.render = function() {
@@ -363,12 +402,6 @@ function checkCollisions() {
         {
             game.isPaused = true;
             game.isLost = true;
-            console.log('Game is Starter: ' + game.isStarted);
-            console.log('Game is Paused: ' + game.isPaused);
-            console.log('Game is Over: ' + game.isLost);
-            Text('36pt Impact', 'center', settings.boardSize.width / 2, settings.boardSize.width / 2, 'Game Over');
-            Text('28pt Impact', 'center', settings.boardSize.width / 2, (settings.boardSize.width / 2) + 83, 'Press Space to try again');
-            console.log('Game is about to reset');
         }
         if (player.row === 1) game.isWon = true;
     }

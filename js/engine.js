@@ -102,7 +102,6 @@
     // Instantiate the game
     function startGame() {
         game = new Game();
-        game.render();
     }
 
     /* This function is called by main (our game loop) and itself calls all
