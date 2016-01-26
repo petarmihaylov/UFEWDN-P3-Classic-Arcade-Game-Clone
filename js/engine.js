@@ -115,8 +115,6 @@
      * on the entities themselves within your app.js file).
      */
     function update(dt) {
-        //TODO: Remove this console.log line after implementing in indication when the game is paused
-        //console.log(game.isPaused);
         if (game.isPaused) return;
         updateEntities(dt);
         checkCollisions();
