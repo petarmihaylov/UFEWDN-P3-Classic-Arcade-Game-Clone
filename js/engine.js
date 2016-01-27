@@ -114,7 +114,10 @@
      * on the entities themselves within your app.js file).
      */
     function update(dt) {
-        if (game.isPaused) return;
+        // game should always be updated
+        game.update();
+        if (game.isLost) return;
+        if (game.isStarted && game.isPaused && (!game.isLost || !game.isWon) ) return;
         updateEntities(dt);
         checkCollisions();
     }
@@ -183,12 +186,14 @@
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
          */
+
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
 
         player.render();
 
+        // Render the game last so that the menu text is always the one on top
         game.render();
     }
 
