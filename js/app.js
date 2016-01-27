@@ -19,53 +19,38 @@ var Game = function () {
     this.isLost = false;
 
     // Define all the menu text
-    this.titleGame = new Text('40pt Impact', 'center', settings.boardSize.width / 2, 43, 'Classic Frogger Remake', 'Lime');
-    this.rules = new Text('36pt Impact', 'center', settings.boardSize.width / 2, 106, 'The Rules', 'DodgerBlue');
-    this.controlsRule = new Text('28pt Impact', 'center', settings.boardSize.width / 2, 179, 'Use the arrow keys to move', 'Lime');
-    this.enemiesRule = new Text('28pt Impact', 'center', settings.boardSize.width / 2, 228, 'Avoid the bugs', 'Lime');
-    this.winRule = new Text('28pt Impact', 'center', settings.boardSize.width / 2, 272, 'Get to the water to win!', 'Lime');
-    this.selectDifficulty = new Text('36pt Impact', 'center', settings.boardSize.width / 2, settings.boardSize.width / 2, 'Select Difficulty', 'DodgerBlue');
+    this.titleGame = new GameText('40pt Impact', 'center', settings.boardSize.width / 2, 43, 'Classic Frogger Remake', 'Lime');
+    this.rules = new GameText('36pt Impact', 'center', settings.boardSize.width / 2, 106, 'The Rules', 'DodgerBlue');
+    this.controlsRule = new GameText('28pt Impact', 'center', settings.boardSize.width / 2, 179, 'Use the arrow keys to move', 'Lime');
+    this.enemiesRule = new GameText('28pt Impact', 'center', settings.boardSize.width / 2, 228, 'Avoid the bugs', 'Lime');
+    this.winRule = new GameText('28pt Impact', 'center', settings.boardSize.width / 2, 272, 'Get to the water to win!', 'Lime');
+    this.selectDifficulty = new GameText('36pt Impact', 'center', settings.boardSize.width / 2, settings.boardSize.width / 2, 'Select Difficulty', 'DodgerBlue');
 
-    this.easy = new Text('28pt Impact', 'center', settings.boardSize.width * 1 / 5, (settings.boardSize.height / 2) + 133, 'Easy');
-    this.normal = new Text('28pt Impact', 'center', settings.boardSize.width * 2 / 5, (settings.boardSize.height / 2) + 133, 'Normal');
-    this.hard = new Text('28pt Impact', 'center', settings.boardSize.width * 3 / 5, (settings.boardSize.height / 2) + 133, 'Hard');
-    this.insane = new Text('28pt Impact', 'center', settings.boardSize.width * 4 / 5, (settings.boardSize.height / 2) + 133, 'Insane!');
+    // Define 4 difficulty modes
+    this.easy = new GameText('28pt Impact', 'center', settings.boardSize.width / 5, (settings.boardSize.height / 2) + 133, 'Easy');
+    this.normal = new GameText('28pt Impact', 'center', settings.boardSize.width * 2 / 5, (settings.boardSize.height / 2) + 133, 'Normal');
+    this.hard = new GameText('28pt Impact', 'center', settings.boardSize.width * 3 / 5, (settings.boardSize.height / 2) + 133, 'Hard');
+    this.insane = new GameText('28pt Impact', 'center', settings.boardSize.width * 4 / 5, (settings.boardSize.height / 2) + 133, 'Insane!');
 
-    this.startGameRule = new Text('36pt Impact', 'center', settings.boardSize.width / 2, 530, 'Press Space to Play', 'DodgerBlue');
+    // Invites the player to start the game
+    this.startGameRule = new GameText('36pt Impact', 'center', settings.boardSize.width / 2, 530, 'Press Space to Play', 'DodgerBlue');
 
     // Displays this message when the game is paused
-    this.resumeRule = new Text('36pt Impact', 'center', settings.boardSize.width / 2, 272, 'Press Space to Resume', 'DodgerBlue');
+    this.resumeRule = new GameText('36pt Impact', 'center', settings.boardSize.width / 2, 272, 'Press Space to Resume', 'DodgerBlue');
 
     // Displays these messages when the player looses
-    this.lossRule = new Text('36pt Impact', 'center', settings.boardSize.width / 2, 272, 'Sorry! You lost.', 'DodgerBlue');
-    this.tryAgainRule = new Text('36pt Impact', 'center', settings.boardSize.width / 2, (settings.boardSize.height / 2) + 133, 'Press Space to Play Again', 'DodgerBlue');
+    this.lossRule = new GameText('36pt Impact', 'center', settings.boardSize.width / 2, 272, 'Sorry! You lost.', 'DodgerBlue');
+    this.tryAgainRule = new GameText('36pt Impact', 'center', settings.boardSize.width / 2, (settings.boardSize.height / 2) + 133, 'Press Space to Play Again', 'DodgerBlue');
 
     // Displays these messages when the player wins
-    this.congratulationsRule = new Text('36pt Impact', 'center', settings.boardSize.width / 2, 272, 'Congratulations!', 'DodgerBlue');
-    this.youWonRule = new Text('80pt Impact', 'center', settings.boardSize.width / 2, (settings.boardSize.height / 2) + 133, 'You Won!', 'Lime');
-    this.tryAgainAfterWinningRule = new Text('36pt Impact', 'center', settings.boardSize.width / 2, (settings.boardSize.height / 2) + 233, 'Press Space to Play Again', 'DodgerBlue');
+    this.congratulationsRule = new GameText('36pt Impact', 'center', settings.boardSize.width / 2, 272, 'Congratulations!', 'DodgerBlue');
+    // TODO: Adjust the height at which this appears. Seems a bit low.
+    this.youWonRule = new GameText('80pt Impact', 'center', settings.boardSize.width / 2, (settings.boardSize.height / 2) + 133, 'You Won!', 'Lime');
+    this.tryAgainAfterWinningRule = new GameText('36pt Impact', 'center', settings.boardSize.width / 2, (settings.boardSize.height / 2) + 233, 'Press Space to Play Again', 'DodgerBlue');
 };
 Game.prototype.togglePauseResume =  function() {
+    // Toggles pause/playing state of the game
     (this.isPaused) ? this.isPaused = false : this.isPaused = true;
-
-    // Debug
-    //if (this.isPaused) {
-    //
-    //    // Debug player position
-    //    console.log('Player Position:');
-    //    console.log('x: ' + player.x);
-    //    console.log('y: ' + player.y);
-    //    console.log('row: ' + player.row);
-    //    console.log('col: ' + player.column);
-    //
-    //    //Debug enemy position
-    //    console.log('Enemy[0] Position:');
-    //    console.log('x: ' + allEnemies[0].x);
-    //    console.log('y: ' + allEnemies[0].y);
-    //    console.log('row: ' + allEnemies[0].row);
-    //    console.log('col: ' + allEnemies[0].column);
-    //    console.log(Math.ceil((allEnemies[0]  .x + TILE_WIDTH) / TILE_WIDTH));
-    //}
 };
 
 Game.prototype.update = function () {
@@ -132,6 +117,8 @@ Game.prototype.render = function() {
         this.congratulationsRule.render();
         this.youWonRule.render();
         this.tryAgainAfterWinningRule.render();
+        // Pauses the game so that the entities (player and enemies) are no
+        // longer updated and no input is accepted except space or enter
         game.isPaused = true;
     } else {
         game.isStarted = true;
@@ -147,7 +134,6 @@ Game.prototype.reset = function () {
         allEnemies[enemy].reset();
     }
     player.reset();
-    console.log('game reset triggered');
 };
 
 /**
@@ -162,7 +148,6 @@ var Enemy = function() {
     this.x = -500;
     this.y = -500;
     this.row = 0;
-    this.column = 0;
     this.speed = null;
     this.sprite = 'images/enemy-bug.png';
 };
@@ -177,10 +162,10 @@ Enemy.prototype.update = function(dt) {
         this.putOnTheBoard();
         this.isOnTheBoard = true;
     } else if (this.x > settings.boardSize.width) {
+        // Resets the enemy if they move off of the right edge of the board
         this.reset();
     } else {
         this.move(dt);
-        this.column = Math.ceil((this.x + TILE_WIDTH) / TILE_WIDTH);
     }
 };
 
@@ -216,21 +201,21 @@ var Player = function() {
     // The player is initially not on the board
     this.isOnTheBoard = false;
 
-    // Default game state is paused, so instantiating the player off of the screen will make them "invisible"
     this.x = (settings.boardSize.width - TILE_WIDTH) / 2;
     this.y = settings.boardSize.height - PLAYER_OFFSET_FROM_BOTTOM;
     this.row = settings.boardSize.rows;
     this.column = Math.ceil((settings.boardSize.columns / 2));
-    this.sprite = 'images/char-boy.png'
+    this.sprite = 'images/char-boy.png';
+    this.speed = 2;
 };
 
 // Update the player's position on the board
-Player.prototype.update = function(dt) {
+Player.prototype.update = function() {
     if (!this.isOnTheBoard) {
         this.putOnTheBoard();
         this.isOnTheBoard = true;
     } else {
-        this.move(dt);
+        // TODO: Implement smooth motion for the player
         // Makes sure the player always stays on the board
         if (this.x < 0) {
             this.x = 0;
@@ -252,6 +237,18 @@ Player.prototype.update = function(dt) {
             this.row = settings.boardSize.rows;
         }
     }
+};
+
+// Moves the player across the screen based on key input
+Player.prototype.move = function(positionChange) {
+    // Returns from this function if the player has not had a chance to enter any input yet
+    if (positionChange === undefined) return;
+
+    // Updates the player position
+    this.x += positionChange.x;
+    this.y += positionChange.y;
+    this.row += positionChange.row;
+    this.column += positionChange.column;
 };
 
 // Renders the player on the screen
@@ -291,13 +288,9 @@ Player.prototype.handleInput = function(key) {
     // Choose the game difficulty
     if ( (key === 'left') && (!game.isStarted) ) {
         if (settings.difficulty > 1 ) settings.difficulty -= 1;
-        //console.log('Left Arrow pressed - Difficulty: ' + settings.difficulty);
-        //game.reset();
     }
     if ( (key === 'right') && (!game.isStarted) ) {
         if (settings.difficulty < 4 ) settings.difficulty += 1;
-        //game.reset();
-        //console.log('Right Arrow pressed - Difficulty: ' + settings.difficulty);
     }
 
     // Prevents the player from moving if the game is paused
@@ -316,6 +309,7 @@ Player.prototype.handleInput = function(key) {
     if (key === 'left') {
         changeXBy -= TILE_WIDTH;
         changeColumnBy -= 1;
+
     }
 
     if (key === 'right') {
@@ -331,18 +325,6 @@ Player.prototype.handleInput = function(key) {
     };
 
     this.move(positionChange);
-};
-
-// Moves the player across the screen based on key input
-Player.prototype.move = function(positionChange) {
-    // Returns from this function if the player has not had a chance to enter any input yet
-    if (positionChange === undefined) return;
-
-    // Updates the player position
-    this.x += positionChange.x;
-    this.y += positionChange.y;
-    this.row += positionChange.row;
-    this.column += positionChange.column;
 };
 
 // TODO: Refactor the Settings to be part of the Game class
@@ -369,14 +351,6 @@ var Settings = function() {
     this.difficulty = 2;
 
     this.boardSize = this.getBoardSize();
-    // Limit the number of enemies so that there are at a minimum 3 rows with only 1 enemy - EASY difficulty
-    //this.numEnemies = (this.boardSize.rows - 6) * 2 + 5;
-    if (this.difficulty === 1) {
-        // Ensures there are always at least 5 enemies
-        this.numEnemies = 5;
-    } else {
-        this.numEnemies = this.difficulty * 4 - 1;
-    }
 };
 
 // Determine the size of the board in terms of pixels and rows and columns
@@ -388,7 +362,7 @@ Settings.prototype.getBoardSize = function() {
         'height':   height,
         'columns':  width / TILE_WIDTH,
         'rows':     height / TILE_WIDTH
-    }
+    };
 };
 
 Settings.prototype.update = function (){
@@ -405,7 +379,7 @@ Settings.prototype.update = function (){
  *
  */
 
-var Text = function (font, alignment, x, y, text, fillStyle) {
+var GameText = function (font, alignment, x, y, text, fillStyle) {
     // TODO: Refactor this to use a separate value for the font size, unit of measure, and font
     this.font = font;
 
@@ -419,12 +393,12 @@ var Text = function (font, alignment, x, y, text, fillStyle) {
     this.isGettingSmaller = true;
 };
 
-Text.prototype.changeFillStyle = function(newColor) {
+GameText.prototype.changeFillStyle = function(newColor) {
     this.fillStyle = newColor;
     ctx.fillStyle = this.fillStyle;
 };
 
-Text.prototype.changeSize = function(changeSize) {
+GameText.prototype.changeSize = function(changeSize) {
     // Converts the new font size to a string and prepends it to a sliced 'pt Impact'
     //console.log('Old Font Size: ' + this.fontSize)
     this.fontSize = parseFloat(this.fontSize) + changeSize;
@@ -434,7 +408,7 @@ Text.prototype.changeSize = function(changeSize) {
     //console.log('New Font (and size): ' + this.font);
 };
 
-Text.prototype.animate = function(biggestSize, smallestSize, stepChange) {
+GameText.prototype.animate = function(biggestSize, smallestSize, stepChange) {
     if (this.fontSize <= biggestSize && this.fontSize > smallestSize && this.isGettingSmaller) {
         this.changeSize(stepChange * (-1));
     } else {
@@ -448,7 +422,7 @@ Text.prototype.animate = function(biggestSize, smallestSize, stepChange) {
     }
 };
 
-Text.prototype.render = function() {
+GameText.prototype.render = function() {
     ctx.font = this.font;
     ctx.textAlign = this.alignment;
 

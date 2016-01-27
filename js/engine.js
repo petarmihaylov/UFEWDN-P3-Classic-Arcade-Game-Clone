@@ -139,7 +139,7 @@
                     allEnemies.pop();
                 }
             } else {
-                for (var i = 0; i < difference; i++) {
+                for (i = 0; i < difference; i++) {
                     allEnemies.push(new Enemy);
                 }
             }
