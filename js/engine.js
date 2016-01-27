@@ -116,6 +116,7 @@
     function update(dt) {
         // game should always be updated
         game.update();
+        settings.update();
         if (game.isLost) return;
         if (game.isStarted && game.isPaused && (!game.isLost || !game.isWon) ) return;
         updateEntities(dt);
@@ -130,6 +131,19 @@
      * render methods.
      */
     function updateEntities(dt) {
+        if (allEnemies.length !== settings.numEnemies) {
+            var difference = settings.numEnemies - allEnemies.length;
+            if (difference < 0) {
+                difference = Math.abs(difference);
+                for (var i = 0; i < difference; i++) {
+                    allEnemies.pop();
+                }
+            } else {
+                for (var i = 0; i < difference; i++) {
+                    allEnemies.push(new Enemy);
+                }
+            }
+        }
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });

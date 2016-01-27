@@ -17,21 +17,6 @@ var Game = function () {
     this.isPaused = true;
     this.isWon = false;
     this.isLost = false;
-    /** 1 - easy, 2 - normal, 3 - hard --- default is normal
-     * Easy:
-     * There are always AT LEAST 3 rows that have AT MOST 1 enemy
-     *
-     * Normal:
-     * There are always AT LEAST 2 rows that have AT MOST 1 enemy
-     *
-     * Hard:
-     * There are always AT LEAST 1 row that has AT MOST 1 enemy
-     *
-     * Insane:
-     * All rows are occupied by AT LEAST 3 enemies
-     *
-     */
-    this.difficulty = 2;
 
     // Define all the menu text
     this.titleGame = new Text('40pt Impact', 'center', settings.boardSize.width / 2, 43, 'Classic Frogger Remake', 'Lime');
@@ -41,9 +26,10 @@ var Game = function () {
     this.winRule = new Text('28pt Impact', 'center', settings.boardSize.width / 2, 272, 'Get to the water to win!', 'Lime');
     this.selectDifficulty = new Text('36pt Impact', 'center', settings.boardSize.width / 2, settings.boardSize.width / 2, 'Select Difficulty', 'DodgerBlue');
 
-    this.easy = new Text('28pt Impact', 'center', settings.boardSize.width / 5, (settings.boardSize.height / 2) + 133, 'Easy');
-    this.normal = new Text('28pt Impact', 'center', settings.boardSize.width / 2, (settings.boardSize.height / 2) + 133, 'Normal');
-    this.hard = new Text('28pt Impact', 'center', settings.boardSize.width * 4 / 5, (settings.boardSize.height / 2) + 133, 'Hard');
+    this.easy = new Text('28pt Impact', 'center', settings.boardSize.width * 1 / 5, (settings.boardSize.height / 2) + 133, 'Easy');
+    this.normal = new Text('28pt Impact', 'center', settings.boardSize.width * 2 / 5, (settings.boardSize.height / 2) + 133, 'Normal');
+    this.hard = new Text('28pt Impact', 'center', settings.boardSize.width * 3 / 5, (settings.boardSize.height / 2) + 133, 'Hard');
+    this.insane = new Text('28pt Impact', 'center', settings.boardSize.width * 4 / 5, (settings.boardSize.height / 2) + 133, 'Insane!');
 
     this.startGameRule = new Text('36pt Impact', 'center', settings.boardSize.width / 2, 530, 'Press Space to Play', 'DodgerBlue');
 
@@ -84,18 +70,26 @@ Game.prototype.togglePauseResume =  function() {
 
 Game.prototype.update = function () {
     // Highlight the text for the game difficulty chosen
-    if (game.difficulty === 1) {
+    if (settings.difficulty === 1) {
         this.easy.changeFillStyle('lime');
         this.normal.changeFillStyle('white');
         this.hard.changeFillStyle('white');
-    } else if (game.difficulty === 2) {
+        this.insane.changeFillStyle('white');
+    } else if (settings.difficulty === 2) {
         this.easy.changeFillStyle('white');
         this.normal.changeFillStyle('lime');
         this.hard.changeFillStyle('white');
-    } else {
+        this.insane.changeFillStyle('white');
+    } else if (settings.difficulty === 3) {
         this.easy.changeFillStyle('white');
         this.normal.changeFillStyle('white');
         this.hard.changeFillStyle('lime');
+        this.insane.changeFillStyle('white');
+    } else {
+        this.easy.changeFillStyle('white');
+        this.normal.changeFillStyle('white');
+        this.hard.changeFillStyle('white');
+        this.insane.changeFillStyle('lime');
     }
 
     // Animate the Press Space to Play text
@@ -125,6 +119,7 @@ Game.prototype.render = function() {
         this.easy.render();
         this.normal.render();
         this.hard.render();
+        this.insane.render();
 
         this.startGameRule.render();
 
@@ -149,7 +144,7 @@ Game.prototype.reset = function () {
     this.isPaused = true;
     this.isWon = false;
     this.isLost = false;
-    for (var enemy = 0; enemy < settings.numEnemies; enemy++) {
+    for (var enemy = 0, enemies = allEnemies.length; enemy < enemies; enemy++) {
         allEnemies[enemy].reset();
     }
     player.reset();
@@ -296,12 +291,14 @@ Player.prototype.handleInput = function(key) {
 
     // Choose the game difficulty
     if ( (key === 'left') && (!game.isStarted) ) {
-        if (game.difficulty > 1 ) game.difficulty -= 1;
-        console.log('Left Arrow pressed - Difficulty: ' + game.difficulty);
+        if (settings.difficulty > 1 ) settings.difficulty -= 1;
+        //console.log('Left Arrow pressed - Difficulty: ' + settings.difficulty);
+        //game.reset();
     }
     if ( (key === 'right') && (!game.isStarted) ) {
-        if (game.difficulty < 3 ) game.difficulty += 1;
-        console.log('Right Arrow pressed - Difficulty: ' + game.difficulty);
+        if (settings.difficulty < 4 ) settings.difficulty += 1;
+        //game.reset();
+        //console.log('Right Arrow pressed - Difficulty: ' + settings.difficulty);
     }
 
     // Prevents the player from moving if the game is paused
@@ -356,10 +353,33 @@ Player.prototype.move = function(positionChange) {
  */
 // Define the settings for the game based on the board size
 var Settings = function() {
+    /** 1 - easy, 2 - normal, 3 - hard, 4 - insane --- default is normal
+     * Easy:
+     * There are always AT LEAST 3 rows that have AT MOST 1 enemy
+     *
+     * Normal:
+     * There are always AT LEAST 1 rows that have AT MOST 1 enemy
+     *
+     * Hard:
+     * No guarantee that a row will have only 1 enemy
+     *
+     * Insane:
+     * Many, many enemies!
+     *
+     */
+    this.difficulty = 2;
+
     this.boardSize = this.getBoardSize();
-    // Limit the number of enemies so that there are at a minimum 3 rows with only 1 enemy
-    this.numEnemies = (this.boardSize.rows - 6) * 2 + 5;
+    // Limit the number of enemies so that there are at a minimum 3 rows with only 1 enemy - EASY difficulty
+    //this.numEnemies = (this.boardSize.rows - 6) * 2 + 5;
+    if (this.difficulty === 1) {
+        // Ensures there are always at least 5 enemies
+        this.numEnemies = 5;
+    } else {
+        this.numEnemies = this.difficulty * 4 - 1;
+    }
 };
+
 // Determine the size of the board in terms of pixels and rows and columns
 Settings.prototype.getBoardSize = function() {
     var width = ctx.canvas.width,
@@ -369,6 +389,15 @@ Settings.prototype.getBoardSize = function() {
         'height':   height,
         'columns':  width / TILE_WIDTH,
         'rows':     height / TILE_WIDTH
+    }
+};
+
+Settings.prototype.update = function (){
+    if (this.difficulty === 1) {
+        // Ensures there are always at least 5 enemies
+        this.numEnemies = 5;
+    } else {
+        this.numEnemies = this.difficulty * 4 - 1;
     }
 };
 
@@ -437,7 +466,7 @@ Text.prototype.render = function() {
  *
  */
 function checkCollisions() {
-    for (var enemy = 0; enemy < settings.numEnemies; enemy++) {
+    for (var enemy = 0, enemies = allEnemies.length; enemy < enemies; enemy++) {
         if (allEnemies[enemy].row === player.row && (((allEnemies[enemy].x + 70) >= (player.x)) && allEnemies[enemy].x < player.x + 70))
         {
             game.isPaused = true;
