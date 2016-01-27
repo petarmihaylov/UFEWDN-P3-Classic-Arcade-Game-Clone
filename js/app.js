@@ -12,7 +12,7 @@ var TILE_WIDTH = 101,
  *
  */
 
-var Game = function () {
+var Game = function() {
     this.isStarted = false;
     this.isPaused = true;
     this.isWon = false;
@@ -48,12 +48,12 @@ var Game = function () {
     this.youWonRule = new GameText('80pt Impact', 'center', settings.boardSize.width / 2, (settings.boardSize.height / 2) + 133, 'You Won!', 'Lime');
     this.tryAgainAfterWinningRule = new GameText('36pt Impact', 'center', settings.boardSize.width / 2, (settings.boardSize.height / 2) + 233, 'Press Space to Play Again', 'DodgerBlue');
 };
-Game.prototype.togglePauseResume =  function() {
+Game.prototype.togglePauseResume = function() {
     // Toggles pause/playing state of the game
-    (this.isPaused) ? this.isPaused = false : this.isPaused = true;
+    (this.isPaused) ? this.isPaused = false: this.isPaused = true;
 };
 
-Game.prototype.update = function () {
+Game.prototype.update = function() {
     // Highlight the text for the game difficulty chosen
     if (settings.difficulty === 1) {
         this.easy.changeFillStyle('lime');
@@ -108,12 +108,12 @@ Game.prototype.render = function() {
 
         this.startGameRule.render();
 
-    } else if (game.isPaused && !(game.isWon || game.isLost))  {
+    } else if (game.isPaused && !(game.isWon || game.isLost)) {
         this.resumeRule.render();
     } else if (game.isLost) {
         this.lossRule.render();
         this.tryAgainRule.render();
-    } else if ( game.isWon) {
+    } else if (game.isWon) {
         this.congratulationsRule.render();
         this.youWonRule.render();
         this.tryAgainAfterWinningRule.render();
@@ -125,7 +125,7 @@ Game.prototype.render = function() {
     }
 };
 
-Game.prototype.reset = function () {
+Game.prototype.reset = function() {
     this.isStarted = false;
     this.isPaused = true;
     this.isWon = false;
@@ -279,18 +279,18 @@ Player.prototype.handleInput = function(key) {
 
     // Toggles paused/running states of the game
     if (key === 'space' || key === 'enter') game.togglePauseResume();
-    if ( (key === 'space' || key === 'enter') && (game.isLost || game.isWon) ) {
+    if ((key === 'space' || key === 'enter') && (game.isLost || game.isWon)) {
         game.isLost = false;
         game.isWon = false;
         game.reset();
     }
 
     // Choose the game difficulty
-    if ( (key === 'left') && (!game.isStarted) ) {
-        if (settings.difficulty > 1 ) settings.difficulty -= 1;
+    if ((key === 'left') && (!game.isStarted)) {
+        if (settings.difficulty > 1) settings.difficulty -= 1;
     }
-    if ( (key === 'right') && (!game.isStarted) ) {
-        if (settings.difficulty < 4 ) settings.difficulty += 1;
+    if ((key === 'right') && (!game.isStarted)) {
+        if (settings.difficulty < 4) settings.difficulty += 1;
     }
 
     // Prevents the player from moving if the game is paused
@@ -318,10 +318,10 @@ Player.prototype.handleInput = function(key) {
     }
 
     positionChange = {
-        'x':        changeXBy,
-        'y':        changeYBy,
-        'row':      changeRowBy,
-        'column':   changeColumnBy
+        'x': changeXBy,
+        'y': changeYBy,
+        'row': changeRowBy,
+        'column': changeColumnBy
     };
 
     this.move(positionChange);
@@ -358,14 +358,14 @@ Settings.prototype.getBoardSize = function() {
     var width = ctx.canvas.width,
         height = ctx.canvas.height;
     return {
-        'width':    width,
-        'height':   height,
-        'columns':  width / TILE_WIDTH,
-        'rows':     height / TILE_WIDTH
+        'width': width,
+        'height': height,
+        'columns': width / TILE_WIDTH,
+        'rows': height / TILE_WIDTH
     };
 };
 
-Settings.prototype.update = function (){
+Settings.prototype.update = function() {
     if (this.difficulty === 1) {
         // Ensures there are always at least 5 enemies
         this.numEnemies = 5;
@@ -379,12 +379,12 @@ Settings.prototype.update = function (){
  *
  */
 
-var GameText = function (font, alignment, x, y, text, fillStyle) {
+var GameText = function(font, alignment, x, y, text, fillStyle) {
     // TODO: Refactor this to use a separate value for the font size, unit of measure, and font
     this.font = font;
 
     // Returns whatever is in front of 'pt Impact' for easier font size manipulation
-    this.fontSize = font.slice(0,2);
+    this.fontSize = font.slice(0, 2);
     this.alignment = alignment;
     this.x = x;
     this.y = y;
@@ -440,8 +440,7 @@ GameText.prototype.render = function() {
  */
 function checkCollisions() {
     for (var enemy = 0, enemies = allEnemies.length; enemy < enemies; enemy++) {
-        if (allEnemies[enemy].row === player.row && (((allEnemies[enemy].x + 70) >= (player.x)) && allEnemies[enemy].x < player.x + 70))
-        {
+        if (allEnemies[enemy].row === player.row && (((allEnemies[enemy].x + 70) >= (player.x)) && allEnemies[enemy].x < player.x + 70)) {
             game.isPaused = true;
             game.isLost = true;
         }
