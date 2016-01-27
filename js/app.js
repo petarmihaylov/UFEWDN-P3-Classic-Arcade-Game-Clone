@@ -17,7 +17,20 @@ var Game = function () {
     this.isPaused = true;
     this.isWon = false;
     this.isLost = false;
-    // 1 - easy, 2 - normal, 3 - hard --- default is normal
+    /** 1 - easy, 2 - normal, 3 - hard --- default is normal
+     * Easy:
+     * There are always AT LEAST 3 rows that have AT MOST 1 enemy
+     *
+     * Normal:
+     * There are always AT LEAST 2 rows that have AT MOST 1 enemy
+     *
+     * Hard:
+     * There are always AT LEAST 1 row that has AT MOST 1 enemy
+     *
+     * Insane:
+     * All rows are occupied by AT LEAST 3 enemies
+     *
+     */
     this.difficulty = 2;
 
     // Define all the menu text
@@ -28,15 +41,23 @@ var Game = function () {
     this.winRule = new Text('28pt Impact', 'center', settings.boardSize.width / 2, 272, 'Get to the water to win!', 'Lime');
     this.selectDifficulty = new Text('36pt Impact', 'center', settings.boardSize.width / 2, settings.boardSize.width / 2, 'Select Difficulty', 'DodgerBlue');
 
-    this.easy = new Text('28pt Impact', 'center', settings.boardSize.width / 5, (settings.boardSize.width / 2) + 83, 'Easy');
-    this.normal = new Text('28pt Impact', 'center', settings.boardSize.width / 2, (settings.boardSize.width / 2) + 83, 'Normal');
-    this.hard = new Text('28pt Impact', 'center', settings.boardSize.width * 4 / 5, (settings.boardSize.width / 2) + 83, 'Hard');
+    this.easy = new Text('28pt Impact', 'center', settings.boardSize.width / 5, (settings.boardSize.height / 2) + 133, 'Easy');
+    this.normal = new Text('28pt Impact', 'center', settings.boardSize.width / 2, (settings.boardSize.height / 2) + 133, 'Normal');
+    this.hard = new Text('28pt Impact', 'center', settings.boardSize.width * 4 / 5, (settings.boardSize.height / 2) + 133, 'Hard');
 
     this.startGameRule = new Text('36pt Impact', 'center', settings.boardSize.width / 2, 530, 'Press Space to Play', 'DodgerBlue');
 
-    this.resumeRule = new Text('36pt Impact', 'center', settings.boardSize.width / 2, 272, 'Press Space to Resume');
-    this.lossRule = new Text('36pt Impact', 'center', settings.boardSize.width / 2, 272, 'Sorry! You lost.');
-    this.tryAgainRule = new Text('36pt Impact', 'center', settings.boardSize.width / 2, settings.boardSize.width / 2, 'Press Space to Play Again');
+    // Displays this message when the game is paused
+    this.resumeRule = new Text('36pt Impact', 'center', settings.boardSize.width / 2, 272, 'Press Space to Resume', 'DodgerBlue');
+
+    // Displays these messages when the player looses
+    this.lossRule = new Text('36pt Impact', 'center', settings.boardSize.width / 2, 272, 'Sorry! You lost.', 'DodgerBlue');
+    this.tryAgainRule = new Text('36pt Impact', 'center', settings.boardSize.width / 2, (settings.boardSize.height / 2) + 133, 'Press Space to Play Again', 'DodgerBlue');
+
+    // Displays these messages when the player wins
+    this.congratulationsRule = new Text('36pt Impact', 'center', settings.boardSize.width / 2, 272, 'Congratulations!', 'DodgerBlue');
+    this.youWonRule = new Text('80pt Impact', 'center', settings.boardSize.width / 2, (settings.boardSize.height / 2) + 133, 'You Won!', 'Lime');
+    this.tryAgainAfterWinningRule = new Text('36pt Impact', 'center', settings.boardSize.width / 2, (settings.boardSize.height / 2) + 233, 'Press Space to Play Again', 'DodgerBlue');
 };
 Game.prototype.togglePauseResume =  function() {
     (this.isPaused) ? this.isPaused = false : this.isPaused = true;
@@ -61,23 +82,37 @@ Game.prototype.togglePauseResume =  function() {
     //}
 };
 
+Game.prototype.update = function () {
+    // Highlight the text for the game difficulty chosen
+    if (game.difficulty === 1) {
+        this.easy.changeFillStyle('lime');
+        this.normal.changeFillStyle('white');
+        this.hard.changeFillStyle('white');
+    } else if (game.difficulty === 2) {
+        this.easy.changeFillStyle('white');
+        this.normal.changeFillStyle('lime');
+        this.hard.changeFillStyle('white');
+    } else {
+        this.easy.changeFillStyle('white');
+        this.normal.changeFillStyle('white');
+        this.hard.changeFillStyle('lime');
+    }
+
+    // Animate the Press Space to Play text
+    this.startGameRule.animate(36, 30, 0.2);
+
+    // Animate the Press Space to Resume text (when the game is paused)
+    this.resumeRule.animate(36, 30, 0.2);
+
+    // Animate the Try again rule
+    this.tryAgainRule.animate(36, 30, 0.2);
+
+    // Animate the You Won rule
+    this.youWonRule.animate(80, 60, 0.4);
+};
+
 Game.prototype.render = function() {
     if (!game.isStarted && game.isPaused && !game.isLost) {
-
-        // Highlight the text for the game difficulty chosen
-        if (game.difficulty === 1) {
-            this.easy.changeFillStyle('lime');
-            this.normal.changeFillStyle('white');
-            this.hard.changeFillStyle('white');
-        } else if (game.difficulty === 2) {
-            this.easy.changeFillStyle('white');
-            this.normal.changeFillStyle('lime');
-            this.hard.changeFillStyle('white');
-        } else {
-            this.easy.changeFillStyle('white');
-            this.normal.changeFillStyle('white');
-            this.hard.changeFillStyle('lime');
-        }
 
         // Render the objects
         this.titleGame.render();
@@ -91,28 +126,19 @@ Game.prototype.render = function() {
         this.normal.render();
         this.hard.render();
 
-        if (this.startGameRule.fontSize <= 36 && this.startGameRule.fontSize > 30 && this.startGameRule.isGettingSmaller) {
-            this.startGameRule.changeSize(-0.2);
-        } else {
-            this.startGameRule.isGettingSmaller = false;
-        }
-
-        if (this.startGameRule.fontSize >= 29 && this.startGameRule.fontSize < 36 && !this.startGameRule.isGettingSmaller) {
-            this.startGameRule.changeSize(0.2);
-        } else {
-            this.startGameRule.isGettingSmaller = true;
-        }
-
-
         this.startGameRule.render();
 
-    } else if (game.isPaused && !game.isLost) {
+    } else if (game.isPaused && !(game.isWon || game.isLost))  {
         this.resumeRule.render();
     } else if (game.isLost) {
         this.lossRule.render();
         this.tryAgainRule.render();
-    } else if (game.isWon) {
+    } else if ( game.isWon) {
         // TODO: Define what happens when the game is won!
+        this.congratulationsRule.render();
+        this.youWonRule.render();
+        this.tryAgainAfterWinningRule.render();
+        game.isPaused = true;
     } else {
         game.isStarted = true;
     }
@@ -323,7 +349,7 @@ Player.prototype.move = function(positionChange) {
     this.column += positionChange.column;
 };
 
-//TODO: Refactor the Settings to part of the Game class
+// TODO: Refactor the Settings to be part of the Game class
 /**
  * SETTINGS CLASS
  *
@@ -352,7 +378,7 @@ Settings.prototype.getBoardSize = function() {
  */
 
 var Text = function (font, alignment, x, y, text, fillStyle) {
-    // TODO: Refactor this to use a separate value for the font size, unit of measurem, and font
+    // TODO: Refactor this to use a separate value for the font size, unit of measure, and font
     this.font = font;
 
     // Returns whatever is in front of 'pt Impact' for easier font size manipulation
@@ -378,6 +404,20 @@ Text.prototype.changeSize = function(changeSize) {
     // TODO: Refactor this to use a variable as the units of measure and the font
     this.font = this.fontSize.toString() + this.font.slice(-9);
     //console.log('New Font (and size): ' + this.font);
+};
+
+Text.prototype.animate = function(biggestSize, smallestSize, stepChange) {
+    if (this.fontSize <= biggestSize && this.fontSize > smallestSize && this.isGettingSmaller) {
+        this.changeSize(stepChange * (-1));
+    } else {
+        this.isGettingSmaller = false;
+    }
+
+    if (this.fontSize >= (smallestSize - 1) && this.fontSize < biggestSize && !this.isGettingSmaller) {
+        this.changeSize(stepChange);
+    } else {
+        this.isGettingSmaller = true;
+    }
 };
 
 Text.prototype.render = function() {
