@@ -129,7 +129,6 @@ Game.prototype.render = function() {
         this.lossRule.render();
         this.tryAgainRule.render();
     } else if ( game.isWon) {
-        // TODO: Define what happens when the game is won!
         this.congratulationsRule.render();
         this.youWonRule.render();
         this.tryAgainAfterWinningRule.render();
