@@ -50,7 +50,7 @@ var Game = function() {
 };
 Game.prototype.togglePauseResume = function() {
     // Toggles pause/playing state of the game
-    (this.isPaused) ? this.isPaused = false: this.isPaused = true;
+    this.isPaused = !this.isPaused;
 };
 
 Game.prototype.update = function() {
